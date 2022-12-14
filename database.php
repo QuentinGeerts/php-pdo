@@ -23,10 +23,14 @@ $password = "";
  * Rate → Exception déclenchée et attrapée par le "catch" puis traitée
  */
 
+ $state = false;
+
 try {
     // Connexion à une base de données
     $pdo = new PDO($dsn, $username, $password);
-    echo "Successfully connected";
+    $state = true;
 } catch (PDOException $e) {
-    echo $e->getMessage();
+    echo "<p>Erreur : {$e->getMessage()}</p>";
 }
+
+echo "État de connexion : " . ($state ? 'Connecté' : 'Déconnecté');

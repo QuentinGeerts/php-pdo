@@ -18,40 +18,56 @@ include_once 'database.php';
  * Logique de récupération des données
  */
 
-// Variables globales
+ // Variables globales
 $table_data = null;
 
-// Requête SQL pour récupérer toutes les boissons
-$statement = "SELECT * FROM drink";
+if (isset($pdo)) {
 
-// Prépare et exécute une requête SQL sans marque substitutive
-/**
- * @param {string} $statement - La requête à exécuter
- * @param {int} $fetchMode - Le mode de récupération (défault: PDO::FETCH_BOTH)
- * @return {PDOStatement | false} - Objet PDO contenant les données ou faux en cas d'échec de récupération 
- */
-$object = $pdo->query($statement);
+    // Requête SQL pour récupérer toutes les boissons
+    $statement = "SELECT * FROM drink";
 
-// $boisson1 = $object->fetch();
+    // Prépare et exécute une requête SQL sans marque substitutive
+    /**
+     * @param {string} $statement - La requête à exécuter
+     * @param {int} $fetchMode - Le mode de récupération (défault: PDO::FETCH_BOTH)
+     * @return {PDOStatement | false} - Objet PDO contenant les données ou faux en cas d'échec de récupération 
+     */
+    $object = $pdo->query($statement);
 
-// print_r("<p>Id: $boisson1[0]</p>");
-// print_r("<p>Name: $boisson1[1]</p>");
+    // fetch peut prendre plusieurs paramètres :
+    // PDO::FETCH_BOTH  → Permet d'indexer les données par rapport à leur nom de colonne et index (numérique) => Par défaut
+    // PDO::FETCH_ASSOC → Permet d'indexer les données par rapport à leur nom de colonne
+    // PDO::FETCH_NUM   → Permet d'indexer les données par rapport à leur index
+    // $boisson1 = $object->fetch();
+    $boisson1 = $object->fetch(PDO::FETCH_BOTH);
 
-// $boisson2 = $object->fetch();
+    print_r("<p>Id: $boisson1[0]</p>");
+    print_r("<p>Name: $boisson1[1]</p>");
+    print_r("<p>Id: $boisson1[id]</p>");
+    print_r("<p>Name: $boisson1[name]</p>");
+    print_r($boisson1["name"]);
+    print_r($boisson1);
 
-// print_r("<p>Id: $boisson2[0]</p>");
-// print_r("<p>Name: $boisson2[1]</p>");
+    // $boisson2 = $object->fetch();
 
-$drinks = $object->fetchAll();
-// print_r($drinks);
+    // print_r("<p>Id: $boisson2[0]</p>");
+    // print_r("<p>Name: $boisson2[1]</p>");
 
-foreach ($drinks as $index => $drink) {
-    // print_r($drink);
-    // print_r("<p>Index: $index - Id: $drink[0] - Name: $drink[1]</p>");
-    
-    list($id, $name) = $drink;
+    // fetchAll peut prendre plusieurs paramètres :
+    // PDO::FETCH_BOTH  → Permet d'indexer les données par rapport à leur nom de colonne et index (numérique) => Par défaut
+    // PDO::FETCH_ASSOC → Permet d'indexer les données par rapport à leur nom de colonne
+    // PDO::FETCH_NUM   → Permet d'indexer les données par rapport à leur index
+    $drinks = $object->fetchAll();
+    // print_r($drinks);
 
-    $table_data .= "<tr><td>$id</td><td>$name</td></tr>";
+    foreach ($drinks as $index => $drink) {
+        // print_r($drink);
+        // print_r("<p>Index: $index - Id: $drink[0] - Name: $drink[1]</p>");
+
+        list($id, $name) = $drink;
+
+        $table_data .= "<tr><td>$id</td><td>$name</td></tr>";
+    }
 }
 
 /**
@@ -74,7 +90,9 @@ foreach ($drinks as $index => $drink) {
         table {
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             border: 1px solid black;
             width: 150px;
             padding: 10px;
